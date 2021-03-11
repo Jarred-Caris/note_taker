@@ -32,26 +32,17 @@ app.get("/api/notes", (req, res) => res.json(noteArray));
 
 // write and read a new note and save to db.json file
 app.post("/api/notes", (req, res) => {
+  const newNote = req.body;
+  newNote.id = uniqid();
+  noteArray.push(newNote);
+  console.log("Congrats on your new note");
   fs.readFile(db, (err, data) => {
-    if (err) {
-      console.log("Uh-Oh. Something hasnt worked");
-    } else {
-      const newNote = req.body;
-      newNote.id = uniqid();
-      noteArray.push(newNote);
-      console.log("Congrats on your new note");
+    if (err) throw err;
 
-
-      
-
-      fs.writeFile(db, JSON.stringify(noteArray), (err) => {
-        if (err) {
-          console.log("Something has gone wrong");
-        } else {
-          res.json(noteArray);
-        }
-      });
-    }
+    fs.writeFile(db, JSON.stringify(noteArray), (err) => {
+      if (err) throw err;
+      res.json(noteArray);
+    });
   });
 });
 
